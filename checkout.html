@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Organic Fresh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --secondary-green: #81C784;
+            --accent-orange: #FF9800;
+        }
+        
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .checkout-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .checkout-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-header">
+        <div class="container">
+            <h1><i class="fas fa-shopping-cart me-2"></i>Checkout</h1>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="checkout-section">
+                    <h3>Shipping Information</h3>
+                    <form id="checkoutForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address *</label>
+                            <input type="text" class="form-control" id="address" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ZIP Code *</label>
+                                <input type="text" class="form-control" id="zipCode" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="checkout-section">
+                    <h3>Payment Method</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment" id="card" checked>
+                                <label class="form-check-label" for="card">
+                                    <i class="fas fa-credit-card me-2"></i>Credit Card
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment" id="paypal">
+                                <label class="form-check-label" for="paypal">
+                                    <i class="fab fa-paypal me-2"></i>PayPal
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment" id="cash">
+                                <label class="form-check-label" for="cash">
+                                    <i class="fas fa-money-bill me-2"></i>Cash on Delivery
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="checkout-section">
+                    <h3>Order Summary</h3>
+                    <div id="orderItems">
+                        <p class="text-muted">Loading cart items...</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total: $<span id="orderTotal">0.00</span></strong>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-3" onclick="placeOrder()" style="background: var(--primary-green); border: none;">
+                        Place Order
+                    </button>
+                    <a href="index.html" class="btn btn-outline-secondary w-100 mt-2">Back to Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderSummary();
+        });
+
+        function loadOrderSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+
+            if (cart.length === 0) {
+                orderItems.innerHTML = '<p class="text-muted">No items in cart</p>';
+                orderTotal.textContent = '0.00';
+                return;
+            }
+
+            orderItems.innerHTML = cart.map(item => `
+                <div class="d-flex justify-content-between mb-2">
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            orderTotal.textContent = total.toFixed(2);
+        }
+
+        function sendOrderEmail(order) {
+            // Simulate email sending (in real app, this would call a backend service)
+            const emailData = {
+                to: order.customer.email || 'customer@example.com',
+                subject: `Order Confirmation #${order.id} - Organic Fresh`,
+                body: `
+                    Dear ${order.customer.firstName} ${order.customer.lastName},
+                    
+                    Thank you for your order! Your fresh organic groceries will be delivered in 10 minutes.
+                    
+                    Order Details:
+                    Order ID: #${order.id}
+                    Total: $${order.total}
+                    Payment: ${order.paymentMethod}
+                    
+                    Delivery Address:
+                    ${order.customer.address}
+                    ${order.customer.city}, ${order.customer.zipCode}
+                    
+                    Items Ordered:
+                    ${order.items.map(item => `- ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n                    ')}
+                    
+                    Estimated Delivery Time: 10 minutes
+                    
+                    Thank you for choosing Organic Fresh!
+                    
+                    Best regards,
+                    Organic Fresh Team
+                `
+            };
+            
+            // Store email for simulation (in real app, send via email service)
+            const sentEmails = JSON.parse(localStorage.getItem('sentEmails') || '[]');
+            sentEmails.push({
+                ...emailData,
+                sentAt: new Date().toISOString(),
+                orderId: order.id
+            });
+            localStorage.setItem('sentEmails', JSON.stringify(sentEmails));
+            
+            console.log('Email sent:', emailData);
+        }
+        
+        function placeOrder() {
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Get payment method
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').nextElementSibling.textContent.trim();
+            
+            // Create order object
+            const order = {
+                id: Date.now(),
+                customer: {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    zipCode: document.getElementById('zipCode').value
+                },
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2),
+                paymentMethod: paymentMethod,
+                date: new Date().toISOString()
+            };
+            
+            // Save order to localStorage
+            const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+            existingOrders.push(order);
+            localStorage.setItem('customerOrders', JSON.stringify(existingOrders));
+            
+            // Send email notification
+            sendOrderEmail(order);
+            
+            // Clear cart
+            localStorage.removeItem('cart');
+            
+            alert(`Order #${order.id} placed successfully! A confirmation email has been sent. Your order will be delivered in 10 minutes!`);
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

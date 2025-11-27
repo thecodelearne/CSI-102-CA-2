@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Fresh - Premium Grocery Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --secondary-green: #81C784;
+            --accent-orange: #FF9800;
+            --text-dark: #2E2E2E;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(76, 175, 80, 0.8), rgba(129, 199, 132, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23e8f5e8" width="1200" height="600"/><circle fill="%234CAF50" cx="200" cy="150" r="50" opacity="0.3"/><circle fill="%2381C784" cx="800" cy="300" r="80" opacity="0.2"/><circle fill="%23FF9800" cx="1000" cy="100" r="30" opacity="0.4"/></svg>');
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+        }
+        
+        .search-container {
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            height: 200px;
+            background: linear-gradient(45deg, #f0f8f0, #e8f5e8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-green);
+        }
+        
+        .price {
+            color: var(--accent-orange);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .category-card {
+            background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .cart-count {
+            background: var(--accent-orange);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+        
+        .search-results {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .search-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .search-item:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <img src="logo.svg" alt="Satvik Organic" height="40" class="me-2">Satvik Organic
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-light me-2" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <button class="btn btn-outline-light me-2" onclick="accessAdmin()" title="Admin Access">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="btn btn-light" onclick="window.location.href='checkout.html'">
+                        <i class="fas fa-user me-1"></i>Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Fresh Organic Groceries</h1>
+            <p class="lead mb-5">Delivered to your doorstep with love and care</p>
+            
+            <!-- Search Bar -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="search-container position-relative">
+                        <div class="input-group">
+                            <input type="text" class="form-control border-0 py-3 px-4" 
+                                   placeholder="Search for fresh vegetables, fruits, dairy..." 
+                                   id="searchInput">
+                            <button class="btn btn-primary px-4" onclick="searchProducts()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-results position-absolute w-100 mt-2" id="searchResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Shop by Category</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="category-card" onclick="filterProducts('vegetables')">
+                        <i class="fas fa-carrot fa-3x mb-3"></i>
+                        <h5>Fresh Vegetables</h5>
+                        <p>Farm fresh vegetables</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="category-card" onclick="filterProducts('fruits')">
+                        <i class="fas fa-apple-alt fa-3x mb-3"></i>
+                        <h5>Organic Fruits</h5>
+                        <p>Sweet & juicy fruits</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="category-card" onclick="filterProducts('dairy')">
+                        <i class="fas fa-cheese fa-3x mb-3"></i>
+                        <h5>Dairy Products</h5>
+                        <p>Fresh milk & cheese</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="category-card" onclick="filterProducts('grains')">
+                        <i class="fas fa-seedling fa-3x mb-3"></i>
+                        <h5>Grains & Cereals</h5>
+                        <p>Healthy whole grains</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h2>Featured Products</h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="filterProducts('all')">All</button>
+                    <button class="btn btn-outline-primary" onclick="filterProducts('vegetables')">Vegetables</button>
+                    <button class="btn btn-outline-primary" onclick="filterProducts('fruits')">Fruits</button>
+                    <button class="btn btn-outline-primary" onclick="filterProducts('dairy')">Dairy</button>
+                </div>
+            </div>
+            
+            <div class="row g-4" id="productsContainer">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="mb-4">Why Choose Organic Fresh?</h2>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="d-flex">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <h5>100% Organic</h5>
+                                    <p>All our products are certified organic and pesticide-free</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex">
+                                <i class="fas fa-truck text-success me-3 mt-1"></i>
+                                <div>
+                                    <h5>Fast Delivery</h5>
+                                    <p>Same-day delivery available in most areas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex">
+                                <i class="fas fa-heart text-success me-3 mt-1"></i>
+                                <div>
+                                    <h5>Fresh Quality</h5>
+                                    <p>Hand-picked fresh produce delivered to your door</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-center">
+                        <i class="fas fa-leaf" style="font-size: 10rem; color: var(--primary-green); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-leaf me-2"></i>Organic Fresh</h5>
+                    <p>Your trusted partner for fresh, organic groceries delivered with care.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#products" class="text-light text-decoration-none">Products</a></li>
+                        <li><a href="#about" class="text-light text-decoration-none">About</a></li>
+                        <li><a href="checkout.html" class="text-light text-decoration-none">Checkout</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <p><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope me-2"></i>info@organicfresh.com</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>123 Green Street, Organic City</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 Organic Fresh. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Shopping Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="cartItems">
+                    <p class="text-center text-muted">Your cart is empty</p>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100">
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total: $<span id="cartTotal">0.00</span></strong>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" onclick="proceedToCheckout()">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check for admin access
+        function checkAdminAccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminKey = urlParams.get('admin');
+            
+            if (adminKey === '123') {
+                window.location.href = 'admin.html?key=admin@123';
+                return;
+            }
+        }
+        
+        // Load site data (either from admin changes or default)
+        function loadSiteData() {
+            const savedData = localStorage.getItem('siteData');
+            const previewData = localStorage.getItem('previewData');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('preview') === 'true' && previewData) {
+                return JSON.parse(previewData);
+            } else if (savedData) {
+                return JSON.parse(savedData);
+            }
+            
+            // Return default data if no saved data exists
+            return null;
+        }
+        
+        // Update page content with admin data
+        function updatePageContent(siteData) {
+            if (!siteData) return;
+            
+            // Update hero section
+            if (siteData.hero) {
+                const heroTitle = document.querySelector('.hero-section h1');
+                const heroSubtitle = document.querySelector('.hero-section .lead');
+                if (heroTitle) heroTitle.textContent = siteData.hero.title;
+                if (heroSubtitle) heroSubtitle.textContent = siteData.hero.subtitle;
+            }
+            
+            // Update contact info in footer
+            if (siteData.contact) {
+                const phoneEl = document.querySelector('.footer p:nth-child(1)');
+                const emailEl = document.querySelector('.footer p:nth-child(2)');
+                const addressEl = document.querySelector('.footer p:nth-child(3)');
+                
+                if (phoneEl) phoneEl.innerHTML = `<i class="fas fa-phone me-2"></i>${siteData.contact.phone}`;
+                if (emailEl) emailEl.innerHTML = `<i class="fas fa-envelope me-2"></i>${siteData.contact.email}`;
+                if (addressEl) addressEl.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${siteData.contact.address}`;
+            }
+            
+            // Update products if available
+            if (siteData.products) {
+                products.length = 0; // Clear existing products
+                products.push(...siteData.products); // Add new products
+            }
+        }
+        
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for admin access first
+            checkAdminAccess();
+            
+            // Load and apply site data
+            const siteData = loadSiteData();
+            updatePageContent(siteData);
+            
+            const isLoggedIn = localStorage.getItem('ecoWellnessLoggedIn');
+            if (isLoggedIn !== 'true') {
+                // Skip login check for preview mode
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('preview') !== 'true') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
+            
+            // Update user info in navbar if logged in
+            const currentUser = JSON.parse(localStorage.getItem('ecoWellnessCurrentUser') || 'null');
+            if (currentUser) {
+                const accountBtn = document.querySelector('.btn-light');
+                accountBtn.innerHTML = `<i class="fas fa-user me-1"></i>${currentUser.name}`;
+                accountBtn.onclick = function() { showUserMenu(); };
+            }
+            
+            displayProducts(products);
+            setupSearch();
+        });
+        
+        function showUserMenu() {
+            if (confirm('Do you want to logout?')) {
+                localStorage.removeItem('ecoWellnessLoggedIn');
+                localStorage.removeItem('ecoWellnessCurrentUser');
+                localStorage.removeItem('ecoWellnessRemember');
+                window.location.href = 'login.html';
+            }
+        }
+        
+        function accessAdmin() {
+            const password = prompt('Enter admin password:');
+            if (password === 'admin@123') {
+                window.location.href = 'admin.html?key=admin@123';
+            } else if (password !== null) {
+                alert('Invalid password!');
+            }
+        }
+
+        // Sample product data
+        const products = [
+            {id: 1, name: "Organic Tomatoes", category: "vegetables", price: 3.99, image: "🍅"},
+            {id: 2, name: "Fresh Carrots", category: "vegetables", price: 2.49, image: "🥕"},
+            {id: 3, name: "Green Spinach", category: "vegetables", price: 2.99, image: "🥬"},
+            {id: 4, name: "Red Bell Peppers", category: "vegetables", price: 4.99, image: "🫑"},
+            {id: 5, name: "Organic Apples", category: "fruits", price: 4.49, image: "🍎"},
+            {id: 6, name: "Fresh Bananas", category: "fruits", price: 1.99, image: "🍌"},
+            {id: 7, name: "Juicy Oranges", category: "fruits", price: 3.49, image: "🍊"},
+            {id: 8, name: "Sweet Strawberries", category: "fruits", price: 5.99, image: "🍓"},
+            {id: 9, name: "Organic Milk", category: "dairy", price: 3.99, image: "🥛"},
+            {id: 10, name: "Fresh Cheese", category: "dairy", price: 6.99, image: "🧀"},
+            {id: 11, name: "Greek Yogurt", category: "dairy", price: 4.49, image: "🥛"},
+            {id: 12, name: "Farm Eggs", category: "dairy", price: 3.49, image: "🥚"},
+            {id: 13, name: "Brown Rice", category: "grains", price: 2.99, image: "🌾"},
+            {id: 14, name: "Quinoa", category: "grains", price: 7.99, image: "🌾"},
+            {id: 15, name: "Oats", category: "grains", price: 3.99, image: "🌾"},
+            {id: 16, name: "Whole Wheat", category: "grains", price: 4.49, image: "🌾"}
+        ];
+
+        let cart = [];
+        let filteredProducts = [...products];
+
+        // This is now handled in the main DOMContentLoaded event above
+
+        function displayProducts(productsToShow) {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+
+            productsToShow.forEach(product => {
+                const productCard = `
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card product-card h-100">
+                            <div class="product-image">
+                                ${product.image}
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text text-muted">${product.category}</p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="price">$${product.price}</span>
+                                        <button class="btn btn-primary btn-sm" onclick="addToCart(${product.id})">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += productCard;
+            });
+        }
+
+        function filterProducts(category) {
+            if (category === 'all') {
+                filteredProducts = [...products];
+            } else {
+                filteredProducts = products.filter(product => product.category === category);
+            }
+            displayProducts(filteredProducts);
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length === 0) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                const matches = products.filter(product => 
+                    product.name.toLowerCase().includes(query) ||
+                    product.category.toLowerCase().includes(query)
+                );
+
+                displaySearchResults(matches);
+            });
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        }
+
+        function displaySearchResults(matches) {
+            const searchResults = document.getElementById('searchResults');
+            
+            if (matches.length === 0) {
+                searchResults.innerHTML = '<div class="search-item">No products found</div>';
+            } else {
+                searchResults.innerHTML = matches.map(product => `
+                    <div class="search-item" onclick="selectProduct(${product.id})">
+                        <div class="d-flex align-items-center">
+                            <span class="me-3" style="font-size: 1.5rem;">${product.image}</span>
+                            <div>
+                                <div class="fw-bold">${product.name}</div>
+                                <small class="text-muted">${product.category} - $${product.price}</small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            searchResults.style.display = 'block';
+        }
+
+        function selectProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                // Filter and display the selected product
+                displayProducts([product]);
+                // Scroll to products section
+                document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+                // Hide search results
+                document.getElementById('searchResults').style.display = 'none';
+                // Clear search input
+                document.getElementById('searchInput').value = '';
+            }
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (query) {
+                const matches = products.filter(product => 
+                    product.name.toLowerCase().includes(query) ||
+                    product.category.toLowerCase().includes(query)
+                );
+                displayProducts(matches);
+                document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+
+            updateCartDisplay();
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Added';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-primary');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+            }, 1000);
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+
+            // Update cart modal
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-center text-muted">Your cart is empty</p>';
+                cartTotal.textContent = '0.00';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="me-3" style="font-size: 1.5rem;">${item.image}</span>
+                            <div>
+                                <div class="fw-bold">${item.name}</div>
+                                <small class="text-muted">$${item.price} each</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartTotal.textContent = total.toFixed(2);
+            }
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+
+        function toggleCart() {
+            const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+            cartModal.show();
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Store cart data in localStorage for checkout page
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.href = 'checkout.html';
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- AI Assistant Chatbot -->
+    <div id="chatWidget" class="chat-widget">
+        <div id="chatToggle" class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div id="chatBox" class="chat-box" style="display: none;">
+            <div class="chat-header">
+                <h6><i class="fas fa-leaf me-2"></i>Organic Assistant</h6>
+                <button onclick="toggleChat()" class="btn-close-chat">×</button>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="message bot">🌱 Welcome to Organic Fresh! How can I help you today?</div>
+                <div class="message bot options">
+                    <button onclick="selectOption('products')">🛒 Browse Products</button>
+                    <button onclick="selectOption('orders')">📦 Check My Orders</button>
+                    <button onclick="selectOption('help')">❓ Need Help</button>
+                    <button onclick="selectOption('contact')">📞 Contact Us</button>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your command..." onkeypress="sendMessage(event)">
+                <button onclick="sendMessage()" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .chat-box {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .btn-close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 280px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .message.bot {
+            background: #f0f0f0;
+            align-self: flex-start;
+        }
+        
+        .message.user {
+            background: var(--primary-green);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .message.options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .message.options button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.3s;
+        }
+        
+        .message.options button:hover {
+            background: var(--secondary-green);
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            outline: none;
+        }
+        
+        .btn-send {
+            background: var(--primary-green);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        function toggleChat() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function sendMessage(event) {
+            if (event && event.key !== 'Enter') return;
+            
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addChatMessage(text, 'user');
+            input.value = '';
+
+            // Process command locally (simulating the backend)
+            setTimeout(() => {
+                const response = processCommand(text);
+                addChatMessage(response.text || response, 'bot');
+                if (response.options) {
+                    addChatOptions(response.options);
+                }
+            }, 500);
+        }
+
+        function addChatMessage(text, type) {
+            const messages = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'message ' + type;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function selectOption(option) {
+            addChatMessage(getOptionText(option), 'user');
+            
+            setTimeout(() => {
+                const response = processOption(option);
+                addChatMessage(response.text, 'bot');
+                if (response.options) {
+                    addChatOptions(response.options);
+                }
+            }, 500);
+        }
+        
+        function getOptionText(option) {
+            const texts = {
+                'products': '🛒 I want to browse products',
+                'orders': '📦 Check my orders',
+                'help': '❓ I need help',
+                'contact': '📞 Contact information',
+                'vegetables': '🥕 Show me vegetables',
+                'fruits': '🍎 Show me fruits',
+                'dairy': '🥛 Show me dairy products',
+                'grains': '🌾 Show me grains',
+                'cart': '🛒 View my cart',
+                'checkout': '💳 Go to checkout',
+                'track': '📍 Track my order'
+            };
+            return texts[option] || option;
+        }
+        
+        function processOption(option) {
+            switch(option) {
+                case 'products':
+                    return {
+                        text: '🌱 What type of organic products are you looking for?',
+                        options: [['vegetables', '🥕 Vegetables'], ['fruits', '🍎 Fruits'], ['dairy', '🥛 Dairy'], ['grains', '🌾 Grains']]
+                    };
+                    
+                case 'vegetables':
+                    return {
+                        text: '🥕 Fresh Organic Vegetables - Click to add to cart:',
+                        options: [['add_tomatoes', '🍅 Add Tomatoes - $3.99'], ['add_carrots', '🥕 Add Carrots - $2.49'], ['add_spinach', '🥬 Add Spinach - $2.99'], ['add_peppers', '🫑 Add Bell Peppers - $4.99'], ['products', '⬅️ Back']]
+                    };
+                    
+                case 'fruits':
+                    return {
+                        text: '🍎 Fresh Organic Fruits - Click to add to cart:',
+                        options: [['add_apples', '🍎 Add Apples - $4.49'], ['add_bananas', '🍌 Add Bananas - $1.99'], ['add_oranges', '🍊 Add Oranges - $3.49'], ['add_strawberries', '🍓 Add Strawberries - $5.99'], ['products', '⬅️ Back']]
+                    };
+                    
+                case 'dairy':
+                    return {
+                        text: '🥛 Fresh Dairy Products - Click to add to cart:',
+                        options: [['add_milk', '🥛 Add Organic Milk - $3.99'], ['add_cheese', '🧀 Add Fresh Cheese - $6.99'], ['add_yogurt', '🥛 Add Greek Yogurt - $4.49'], ['add_eggs', '🥚 Add Farm Eggs - $3.49'], ['products', '⬅️ Back']]
+                    };
+                    
+                case 'grains':
+                    return {
+                        text: '🌾 Healthy Grains & Cereals - Click to add to cart:',
+                        options: [['add_rice', '🌾 Add Brown Rice - $2.99'], ['add_quinoa', '🌾 Add Quinoa - $7.99'], ['add_oats', '🌾 Add Oats - $3.99'], ['add_wheat', '🌾 Add Whole Wheat - $4.49'], ['products', '⬅️ Back']]
+                    };
+                    
+                case 'orders':
+                    return {
+                        text: '📦 Order Options:',
+                        options: [['track', '📍 Track Order'], ['checkout', '💳 Checkout'], ['cart', '🛒 View Cart']]
+                    };
+                    
+                case 'cart':
+                    const cartItems = cart.length;
+                    const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+                    return {
+                        text: `🛒 Your cart: ${cartItems} items - Total: $${cartTotal}`,
+                        options: [['checkout', '💳 Proceed to Checkout'], ['products', '🛒 Continue Shopping']]
+                    };
+                    
+                case 'add_tomatoes':
+                    addToCartFromChat(1, 'Organic Tomatoes', 'vegetables', 3.99, '🍅');
+                    return { text: '✅ Organic Tomatoes added to cart!', options: [['vegetables', '🥕 More Vegetables'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_carrots':
+                    addToCartFromChat(2, 'Fresh Carrots', 'vegetables', 2.49, '🥕');
+                    return { text: '✅ Fresh Carrots added to cart!', options: [['vegetables', '🥕 More Vegetables'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_spinach':
+                    addToCartFromChat(3, 'Green Spinach', 'vegetables', 2.99, '🥬');
+                    return { text: '✅ Green Spinach added to cart!', options: [['vegetables', '🥕 More Vegetables'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_peppers':
+                    addToCartFromChat(4, 'Red Bell Peppers', 'vegetables', 4.99, '🫑');
+                    return { text: '✅ Red Bell Peppers added to cart!', options: [['vegetables', '🥕 More Vegetables'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_apples':
+                    addToCartFromChat(5, 'Organic Apples', 'fruits', 4.49, '🍎');
+                    return { text: '✅ Organic Apples added to cart!', options: [['fruits', '🍎 More Fruits'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_bananas':
+                    addToCartFromChat(6, 'Fresh Bananas', 'fruits', 1.99, '🍌');
+                    return { text: '✅ Fresh Bananas added to cart!', options: [['fruits', '🍎 More Fruits'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_oranges':
+                    addToCartFromChat(7, 'Juicy Oranges', 'fruits', 3.49, '🍊');
+                    return { text: '✅ Juicy Oranges added to cart!', options: [['fruits', '🍎 More Fruits'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_strawberries':
+                    addToCartFromChat(8, 'Sweet Strawberries', 'fruits', 5.99, '🍓');
+                    return { text: '✅ Sweet Strawberries added to cart!', options: [['fruits', '🍎 More Fruits'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_milk':
+                    addToCartFromChat(9, 'Organic Milk', 'dairy', 3.99, '🥛');
+                    return { text: '✅ Organic Milk added to cart!', options: [['dairy', '🥛 More Dairy'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_cheese':
+                    addToCartFromChat(10, 'Fresh Cheese', 'dairy', 6.99, '🧀');
+                    return { text: '✅ Fresh Cheese added to cart!', options: [['dairy', '🥛 More Dairy'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_yogurt':
+                    addToCartFromChat(11, 'Greek Yogurt', 'dairy', 4.49, '🥛');
+                    return { text: '✅ Greek Yogurt added to cart!', options: [['dairy', '🥛 More Dairy'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_eggs':
+                    addToCartFromChat(12, 'Farm Eggs', 'dairy', 3.49, '🥚');
+                    return { text: '✅ Farm Eggs added to cart!', options: [['dairy', '🥛 More Dairy'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_rice':
+                    addToCartFromChat(13, 'Brown Rice', 'grains', 2.99, '🌾');
+                    return { text: '✅ Brown Rice added to cart!', options: [['grains', '🌾 More Grains'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_quinoa':
+                    addToCartFromChat(14, 'Quinoa', 'grains', 7.99, '🌾');
+                    return { text: '✅ Quinoa added to cart!', options: [['grains', '🌾 More Grains'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_oats':
+                    addToCartFromChat(15, 'Oats', 'grains', 3.99, '🌾');
+                    return { text: '✅ Oats added to cart!', options: [['grains', '🌾 More Grains'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'add_wheat':
+                    addToCartFromChat(16, 'Whole Wheat', 'grains', 4.49, '🌾');
+                    return { text: '✅ Whole Wheat added to cart!', options: [['grains', '🌾 More Grains'], ['checkout', '💳 Checkout'], ['products', '🛒 Continue Shopping']] };
+                    
+                case 'checkout':
+                    return {
+                        text: '💳 Ready to checkout? Click the cart icon in the top menu or the Account button to proceed!',
+                        options: [['products', '🛒 Continue Shopping'], ['help', '❓ Need Help']]
+                    };
+                    
+                case 'track':
+                    return {
+                        text: '📍 To track your order, please check your email for the tracking link or contact us with your order number.',
+                        options: [['contact', '📞 Contact Us'], ['help', '❓ More Help']]
+                    };
+                    
+                case 'contact':
+                    return {
+                        text: '📞 Contact Organic Fresh:\n• Phone: +1 (555) 123-4567\n• Email: info@organicfresh.com\n• Address: 123 Green Street, Organic City',
+                        options: [['products', '🛒 Shop Now'], ['help', '❓ More Help']]
+                    };
+                    
+                case 'help':
+                    return {
+                        text: '❓ How can I help you?',
+                        options: [['products', '🛒 Browse Products'], ['orders', '📦 Order Help'], ['contact', '📞 Contact Support']]
+                    };
+                    
+                default:
+                    return {
+                        text: '🌱 Welcome back! What would you like to do?',
+                        options: [['products', '🛒 Browse Products'], ['orders', '📦 My Orders'], ['help', '❓ Help'], ['contact', '📞 Contact']]
+                    };
+            }
+        }
+        
+        function addChatOptions(options) {
+            const messages = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'message bot options';
+            
+            options.forEach(([value, text]) => {
+                const button = document.createElement('button');
+                button.textContent = text;
+                button.onclick = () => selectOption(value);
+                div.appendChild(button);
+            });
+            
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function addToCartFromChat(id, name, category, price, image) {
+            const product = { id, name, category, price, image };
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+
+            updateCartDisplay();
+        }
+        
+        function processCommand(command) {
+            command = command.toLowerCase();
+            
+            if (command.includes('product') || command.includes('shop')) {
+                return processOption('products');
+            }
+            if (command.includes('order') || command.includes('track')) {
+                return processOption('orders');
+            }
+            if (command.includes('contact') || command.includes('phone')) {
+                return processOption('contact');
+            }
+            if (command.includes('help')) {
+                return processOption('help');
+            }
+            
+            return {
+                text: '🌱 I can help you with:\n• Browse organic products\n• Check orders\n• Contact information\n• General help\n\nWhat interests you?',
+                options: [['products', '🛒 Products'], ['orders', '📦 Orders'], ['contact', '📞 Contact'], ['help', '❓ Help']]
+            };
+        }
+    </script>
+</body>
+</html>

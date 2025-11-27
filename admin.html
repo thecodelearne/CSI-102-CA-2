@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Organic Fresh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --secondary-green: #81C784;
+            --accent-orange: #FF9800;
+            --text-dark: #2E2E2E;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .edit-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .product-edit-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+        
+        .btn-save {
+            background: var(--primary-green);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        
+        .btn-save:hover {
+            background: var(--secondary-green);
+            color: white;
+        }
+        
+        .preview-image {
+            font-size: 2rem;
+            text-align: center;
+            padding: 10px;
+            background: #f0f8f0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="fas fa-cog me-2"></i>Admin Panel</h1>
+                <div>
+                    <button class="btn btn-info me-2" onclick="window.location.href='management.html'">
+                        <i class="fas fa-clipboard-list me-1"></i>Order Management
+                    </button>
+                    <button class="btn btn-light me-2" onclick="previewChanges()">
+                        <i class="fas fa-eye me-1"></i>Preview
+                    </button>
+                    <button class="btn btn-warning me-2" onclick="saveAllChanges()">
+                        <i class="fas fa-save me-1"></i>Save All Changes
+                    </button>
+                    <button class="btn btn-outline-light" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Hero Section Editor -->
+        <div class="edit-section">
+            <h3><i class="fas fa-home me-2"></i>Hero Section</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Main Title</label>
+                    <input type="text" class="form-control" id="heroTitle" value="Fresh Organic Groceries">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Subtitle</label>
+                    <input type="text" class="form-control" id="heroSubtitle" value="Delivered to your doorstep with love and care">
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Editor -->
+        <div class="edit-section">
+            <h3><i class="fas fa-th-large me-2"></i>Categories</h3>
+            <div class="row" id="categoriesEditor">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Products Editor -->
+        <div class="edit-section">
+            <h3><i class="fas fa-box me-2"></i>Products Management</h3>
+            <div class="mb-3">
+                <button class="btn btn-primary" onclick="addNewProduct()">
+                    <i class="fas fa-plus me-1"></i>Add New Product
+                </button>
+            </div>
+            <div id="productsEditor">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Payment Options Editor -->
+        <div class="edit-section">
+            <h3><i class="fas fa-credit-card me-2"></i>Payment Options</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="paymentCard" checked>
+                        <label class="form-check-label" for="paymentCard">Credit/Debit Cards</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="paymentPaypal" checked>
+                        <label class="form-check-label" for="paymentPaypal">PayPal</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="paymentCash" checked>
+                        <label class="form-check-label" for="paymentCash">Cash on Delivery</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Editor -->
+        <div class="edit-section">
+            <h3><i class="fas fa-phone me-2"></i>Contact Information</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="contactPhone" value="+1 (555) 123-4567">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="contactEmail" value="info@organicfresh.com">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-control" id="contactAddress" value="123 Green Street, Organic City">
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check admin authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminKey = urlParams.get('key');
+            
+            if (adminKey !== 'admin@123') {
+                alert('Unauthorized access! Redirecting to main site.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            loadCurrentData();
+        });
+
+        // Sample data structure
+        let siteData = {
+            hero: {
+                title: "Fresh Organic Groceries",
+                subtitle: "Delivered to your doorstep with love and care"
+            },
+            categories: [
+                {id: 1, name: "Fresh Vegetables", description: "Farm fresh vegetables", icon: "fas fa-carrot"},
+                {id: 2, name: "Organic Fruits", description: "Sweet & juicy fruits", icon: "fas fa-apple-alt"},
+                {id: 3, name: "Dairy Products", description: "Fresh milk & cheese", icon: "fas fa-cheese"},
+                {id: 4, name: "Grains & Cereals", description: "Healthy whole grains", icon: "fas fa-seedling"}
+            ],
+            products: [
+                {id: 1, name: "Organic Tomatoes", category: "vegetables", price: 3.99, image: "🍅"},
+                {id: 2, name: "Fresh Carrots", category: "vegetables", price: 2.49, image: "🥕"},
+                {id: 3, name: "Green Spinach", category: "vegetables", price: 2.99, image: "🥬"},
+                {id: 4, name: "Red Bell Peppers", category: "vegetables", price: 4.99, image: "🫑"},
+                {id: 5, name: "Organic Apples", category: "fruits", price: 4.49, image: "🍎"},
+                {id: 6, name: "Fresh Bananas", category: "fruits", price: 1.99, image: "🍌"},
+                {id: 7, name: "Juicy Oranges", category: "fruits", price: 3.49, image: "🍊"},
+                {id: 8, name: "Sweet Strawberries", category: "fruits", price: 5.99, image: "🍓"},
+                {id: 9, name: "Organic Milk", category: "dairy", price: 3.99, image: "🥛"},
+                {id: 10, name: "Fresh Cheese", category: "dairy", price: 6.99, image: "🧀"},
+                {id: 11, name: "Greek Yogurt", category: "dairy", price: 4.49, image: "🥛"},
+                {id: 12, name: "Farm Eggs", category: "dairy", price: 3.49, image: "🥚"},
+                {id: 13, name: "Brown Rice", category: "grains", price: 2.99, image: "🌾"},
+                {id: 14, name: "Quinoa", category: "grains", price: 7.99, image: "🌾"},
+                {id: 15, name: "Oats", category: "grains", price: 3.99, image: "🌾"},
+                {id: 16, name: "Whole Wheat", category: "grains", price: 4.49, image: "🌾"}
+            ],
+            contact: {
+                phone: "+1 (555) 123-4567",
+                email: "info@organicfresh.com",
+                address: "123 Green Street, Organic City"
+            }
+        };
+
+        function loadCurrentData() {
+            // Load hero section
+            document.getElementById('heroTitle').value = siteData.hero.title;
+            document.getElementById('heroSubtitle').value = siteData.hero.subtitle;
+            
+            // Load categories
+            loadCategoriesEditor();
+            
+            // Load products
+            loadProductsEditor();
+            
+            // Load contact info
+            document.getElementById('contactPhone').value = siteData.contact.phone;
+            document.getElementById('contactEmail').value = siteData.contact.email;
+            document.getElementById('contactAddress').value = siteData.contact.address;
+        }
+
+        function loadCategoriesEditor() {
+            const container = document.getElementById('categoriesEditor');
+            container.innerHTML = '';
+            
+            siteData.categories.forEach((category, index) => {
+                const categoryHtml = `
+                    <div class="col-md-6 mb-3">
+                        <div class="product-edit-card">
+                            <h6>Category ${index + 1}</h6>
+                            <div class="mb-2">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" value="${category.name}" 
+                                       onchange="updateCategory(${category.id}, 'name', this.value)">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-control" value="${category.description}" 
+                                       onchange="updateCategory(${category.id}, 'description', this.value)">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Icon Class</label>
+                                <input type="text" class="form-control" value="${category.icon}" 
+                                       onchange="updateCategory(${category.id}, 'icon', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += categoryHtml;
+            });
+        }
+
+        function loadProductsEditor() {
+            const container = document.getElementById('productsEditor');
+            container.innerHTML = '';
+            
+            siteData.products.forEach(product => {
+                const productHtml = `
+                    <div class="product-edit-card" id="product-${product.id}">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="preview-image">${product.image}</div>
+                                <input type="text" class="form-control form-control-sm" value="${product.image}" 
+                                       onchange="updateProduct(${product.id}, 'image', this.value)" placeholder="Emoji">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" value="${product.name}" 
+                                       onchange="updateProduct(${product.id}, 'name', this.value)">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Category</label>
+                                <select class="form-control" onchange="updateProduct(${product.id}, 'category', this.value)">
+                                    <option value="vegetables" ${product.category === 'vegetables' ? 'selected' : ''}>Vegetables</option>
+                                    <option value="fruits" ${product.category === 'fruits' ? 'selected' : ''}>Fruits</option>
+                                    <option value="dairy" ${product.category === 'dairy' ? 'selected' : ''}>Dairy</option>
+                                    <option value="grains" ${product.category === 'grains' ? 'selected' : ''}>Grains</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Price ($)</label>
+                                <input type="number" step="0.01" class="form-control" value="${product.price}" 
+                                       onchange="updateProduct(${product.id}, 'price', parseFloat(this.value))">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Actions</label><br>
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += productHtml;
+            });
+        }
+
+        function updateCategory(id, field, value) {
+            const category = siteData.categories.find(c => c.id === id);
+            if (category) {
+                category[field] = value;
+            }
+        }
+
+        function updateProduct(id, field, value) {
+            const product = siteData.products.find(p => p.id === id);
+            if (product) {
+                product[field] = value;
+                if (field === 'image') {
+                    // Update preview
+                    const preview = document.querySelector(`#product-${id} .preview-image`);
+                    if (preview) preview.textContent = value;
+                }
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                siteData.products = siteData.products.filter(p => p.id !== id);
+                loadProductsEditor();
+            }
+        }
+
+        function addNewProduct() {
+            const newId = Math.max(...siteData.products.map(p => p.id)) + 1;
+            const newProduct = {
+                id: newId,
+                name: "New Product",
+                category: "vegetables",
+                price: 0.00,
+                image: "🥬"
+            };
+            siteData.products.push(newProduct);
+            loadProductsEditor();
+        }
+
+        function saveAllChanges() {
+            // Update hero section
+            siteData.hero.title = document.getElementById('heroTitle').value;
+            siteData.hero.subtitle = document.getElementById('heroSubtitle').value;
+            
+            // Update contact info
+            siteData.contact.phone = document.getElementById('contactPhone').value;
+            siteData.contact.email = document.getElementById('contactEmail').value;
+            siteData.contact.address = document.getElementById('contactAddress').value;
+            
+            // Save to localStorage (in a real app, this would be sent to a server)
+            localStorage.setItem('siteData', JSON.stringify(siteData));
+            
+            alert('Changes saved successfully! The main website will be updated.');
+            
+            // Generate updated index.html content
+            generateUpdatedIndexHTML();
+        }
+
+        function generateUpdatedIndexHTML() {
+            // This function would generate the updated HTML content
+            // For now, we'll just store the data and show a success message
+            console.log('Updated site data:', siteData);
+            
+            // In a real implementation, you would:
+            // 1. Generate the complete HTML with updated content
+            // 2. Send it to a server to update the actual index.html file
+            // 3. Or use a template system to inject the new data
+            
+            alert('Website content has been updated! Changes will be visible on the main site.');
+        }
+
+        function previewChanges() {
+            // Store current changes temporarily
+            const tempData = {
+                hero: {
+                    title: document.getElementById('heroTitle').value,
+                    subtitle: document.getElementById('heroSubtitle').value
+                },
+                products: siteData.products,
+                categories: siteData.categories,
+                contact: {
+                    phone: document.getElementById('contactPhone').value,
+                    email: document.getElementById('contactEmail').value,
+                    address: document.getElementById('contactAddress').value
+                }
+            };
+            
+            localStorage.setItem('previewData', JSON.stringify(tempData));
+            window.open('index.html?preview=true', '_blank');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
